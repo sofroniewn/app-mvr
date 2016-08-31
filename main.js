@@ -103,6 +103,8 @@ app.on('ready', function() {
   var resultStream = deviceStream.pipe(exptStream)
   var loggingDataStream = null
   var loggingMazeStream = null
+  var initKey = null
+  var nextKey = null
   //resultStream.pipe(deviceStream)
   resultStream.pipe(ipcsD)
   resultStream.pipe(ipcsR)
@@ -120,22 +122,14 @@ app.on('ready', function() {
 
   ipcMain.on('initTrial', function (event, key) {
     console.log(mazes[key])
-    experiment.initTrial(mazes[key])
+    initKey = key
   })
 
   ipcMain.on('play', function () {
-    console.log('play', loggingFlag, resetFlag)
-    if (loggingFlag & resetFlag) {
-      // make directories
-      console.log('start logs')
-      savePath = './sessions/' + leftPad(sessionNumber, 6, 0) + '/behavior'
-      mkdirp(savePath)
-      if (loggingDataStream !== null) resultStream.unpipe(loggingDataStream)
-      loggingDataStream = logging.createWriteStream(savePath + '/behavior.data', encoderResults.Data)
-      resultStream.pipe(loggingDataStream)
-      //if (loggingMazeStream !== null) experiment.trialStream.unpipe(loggingMazeStream)
-      //loggingMazeStream = logging.createWriteStream(savePath + '/session.maze', encoderMaze.Data)
-      //experiment.trialStream.pipe(loggingMazeStream)
+    console.log('play')
+    if (resetFlag) {
+      experiment.initTrial(mazes[initKey])
+      experiment.updateTrial(mazes[nextKey])
     }
     device.start()
   })
@@ -152,12 +146,25 @@ app.on('ready', function() {
   })
 
   ipcMain.on('nextTrial', function (event, key) {
+    nextKey = key
     experiment.updateTrial(mazes[key])
   })
 
   ipcMain.on('logging', function (event, data) {
     console.log('logging', data)
     loggingFlag = data
+    if (loggingFlag & resetFlag) {
+      // make directories
+      console.log('start logs')
+      var savePath = './sessions/' + leftPad(sessionNumber, 6, 0) + '/behavior'
+      mkdirp(savePath)
+      if (loggingDataStream !== null) resultStream.unpipe(loggingDataStream)
+      loggingDataStream = logging.createWriteStream(savePath + '/behavior.data', encoderResults.Data)
+      resultStream.pipe(loggingDataStream)
+      if (loggingMazeStream !== null) experiment.trialStream.unpipe(loggingMazeStream)
+      loggingMazeStream = logging.createWriteStream(savePath + '/maze.data', encoderMaze.Data)
+      experiment.trialStream.pipe(loggingMazeStream)
+    }
   })
 
   ipcMain.on('number', function (event, data) {
@@ -177,7 +184,7 @@ app.on('ready', function() {
   })
 
   experiment.trialStream.on('data', function (data) {
-    if (!data.init) controlWindow.webContents.send('nextTrial', data.map.name)
+    if (!data.init) controlWindow.webContents.send('nextTrial', data.maze.name)
   })
 
   mazeVizWindow.on('close', function () {

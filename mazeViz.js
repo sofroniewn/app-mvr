@@ -8,10 +8,10 @@ var stream = null
 var waiting = true
 ipcsT.on('data', function (data) {
   if (waiting) {
-    stream = viz.createStream(data.map)
+    stream = viz.createStream(data.maze)
     ipcsD.pipe(stream)
   } else {
-    viz.updateTrial(data.map)
+    viz.updateTrial(data.maze)
     waiting = false
   }
 })
