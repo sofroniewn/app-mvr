@@ -1,0 +1,13 @@
+package maze;
+
+message Data {
+  repeated Array area=1;
+  repeated Array borders=2;
+  repeated Array links=3;
+  repeated Array triggers=4;
+  required string name=5;
+}
+message Array {
+  repeated float x=1 [packed=true];
+  repeated float y=2 [packed=true];
+}
