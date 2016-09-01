@@ -1,25 +1,20 @@
 package behavior;
 
 message Data {
-  required Position position=1;
-  required Position velocity=2;
-  required bool response=3;
-  required bool reward=4;
-  required uint32 trialNumber=5;
-  required Wall wallDistance=6;
-  required bool link=7;
-  required bool collision=8;
-  required bool advance=9;
-  required uint32 deltaTime=10;
-  required uint32 elapsedTime=11;
-  required uint32 time=12;
-}
-message Position {
-  required float forward=1;
-  required float lateral=2;
-}
-message Wall {
-  required float right=1;
-  required float forward=2;
-  required float left=3;
+  required float positionForward=1;
+  required float positionLateral=2;
+  required float velocityForward=3;
+  required float velocityLateral=4;
+  required float wallLeft=5;
+  required float wallRight=6;
+  required float wallForward=7;
+  required bool response=8;
+  required bool reward=9;
+  required uint32 trialNumber=10;
+  required bool link=11;
+  required bool collision=12;
+  required bool advance=13;
+  required float deltaTime=14;
+  required float time=15;
+  required uint32 date=16;
 }

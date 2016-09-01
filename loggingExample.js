@@ -79,16 +79,29 @@ path = require('path')
 //   })
 // })
 
+// var mazes = {}; // create an empty array
+// glob('./mazes/*.maze', [], function (er, files) {
+//   files.forEach(function (el) {
+//     jsonfile.readFile(el, function (err, obj) {
+//       mazes[path.basename(el)] = obj
+//       console.log(mazes)
+//       console.log(Object.keys(mazes))
+//     })
+//   })
+// })
+
+
 var mazes = {}; // create an empty array
 glob('./mazes/*.maze', [], function (er, files) {
   files.forEach(function (el) {
     jsonfile.readFile(el, function (err, obj) {
-      mazes[path.basename(el)] = obj
-      console.log(mazes)
-      console.log(Object.keys(mazes))
+      mazes[obj[0].name] = obj[0]
+      console.log(obj[0])
     })
   })
 })
+
+
 
 // dict.push({
 //     key:   "keyName",
